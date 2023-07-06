@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/shiningbackground" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="45dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".DetailFragment">
+
+            <TextView
+                android:id="@+id/tv_detailDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:text="Details of The Day you Chosen"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_detailsByNumbers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_detailDate"
+                tools:text="1/1/2001" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearFeelsLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="60dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@+id/iv_cluses"
+                app:layout_constraintTop_toBottomOf="@id/tv_detailsByNumbers">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Temperature"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="18" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_cluses"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="30dp"
+                android:src="@drawable/celsius"
+                app:layout_constraintBottom_toBottomOf="@+id/linearFeelsLike"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearFeelsLike" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/LinearHumidity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="30dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/iv_humidity"
+                app:layout_constraintTop_toBottomOf="@id/tv_detailsByNumbers">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Humidity"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailHumidity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="18" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_humidity"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/humidity"
+                app:layout_constraintBottom_toBottomOf="@+id/LinearHumidity"
+                app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
+                app:layout_constraintTop_toTopOf="@id/LinearHumidity" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearHighTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@+id/iv_highTemp"
+                app:layout_constraintTop_toBottomOf="@id/linearFeelsLike">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="High Temp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailHighTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="18" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_highTemp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="30dp"
+                android:src="@drawable/hot"
+                app:layout_constraintBottom_toBottomOf="@+id/linearHighTemp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearHighTemp" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLowTemp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/iv_lowTemp"
+                app:layout_constraintTop_toBottomOf="@id/LinearHumidity">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Low Temp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailLowTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="9" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_lowTemp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/temperature_low"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLowTemp"
+                app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
+                app:layout_constraintTop_toTopOf="@id/linearLowTemp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineCenter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.50121653" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearPressure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@+id/iv_pressure"
+                app:layout_constraintTop_toBottomOf="@id/linearHighTemp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Pressure"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailPressure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="3%" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_pressure"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="30dp"
+                android:src="@drawable/pressure"
+                app:layout_constraintBottom_toBottomOf="@+id/linearPressure"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearPressure" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearVisibility"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/iv_seaLevel"
+                app:layout_constraintTop_toBottomOf="@id/linearLowTemp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Visibility"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailVisibility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="16" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_seaLevel"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/visibility"
+                app:layout_constraintBottom_toBottomOf="@+id/linearVisibility"
+                app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
+                app:layout_constraintTop_toTopOf="@id/linearVisibility" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearWindSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@+id/iv_windSpeed"
+                app:layout_constraintTop_toBottomOf="@id/linearPressure">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Wind Speed"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailWindSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="5%" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_windSpeed"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="30dp"
+                android:src="@drawable/windspeed"
+                app:layout_constraintBottom_toBottomOf="@+id/linearWindSpeed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearWindSpeed" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearWindDegree"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/iv_windDegree"
+                app:layout_constraintTop_toBottomOf="@id/linearVisibility">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Wind Degree"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_detailWindDegree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="18" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/iv_windDegree"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/winddegree"
+                app:layout_constraintBottom_toBottomOf="@+id/linearWindDegree"
+                app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
+                app:layout_constraintTop_toTopOf="@id/linearWindDegree" />
+
+            <ImageView
+                android:id="@+id/iv_backFromDetail"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/baseline_keyboard_double_arrow_left_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_windSpeed" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</RelativeLayout>

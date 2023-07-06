@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_margin="10dp"
+    android:id="@+id/linearOfCustomRV"
+    android:orientation="horizontal"
+    android:textSize="25sp"
+    android:textStyle="bold">
+
+    <TextView
+        android:id="@+id/tv_dayOfTheWeather"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.9"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:gravity="center_vertical"
+        tools:text="Today" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:maxLines="1"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/humidity" />
+
+    <TextView
+        android:id="@+id/tv_humidity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.2"
+        android:gravity="center_vertical"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_tempOfTheDay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:hint="30"
+        android:maxLines="1"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_weatherDescription"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.6"
+        android:maxLines="1"
+        android:gravity="center_vertical"
+        android:hint="15"
+        android:textSize="16sp"
+        android:layout_marginStart="5dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewArrow"
+        android:src="@drawable/baseline_keyboard_double_arrow_right_24" />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
