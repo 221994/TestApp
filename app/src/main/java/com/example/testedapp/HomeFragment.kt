@@ -3,23 +3,26 @@ package com.example.testedapp
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -48,13 +51,16 @@ import com.google.android.gms.tasks.Task
 
 class HomeFragment : Fragment(), OnItemForeCastClickListener {
     private lateinit var weatherViewModel: WeatherViewModel
-    private lateinit var locationSettingsResultLauncher: ActivityResultLauncher<IntentSenderRequest>
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationSettingsLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var adapter: WeatherAdapter
     private val countOfDaysWeatherRequest = 5 * 8
-    private val locationSettingsRequestCode = 1001
     private lateinit var binding: FragmentHomeBinding
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -64,20 +70,80 @@ class HomeFragment : Fragment(), OnItemForeCastClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.linearMain.visibility = View.GONE
-        initializeViewModel()
         initializeViews()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        requestPermissionLauncher = registerForPermissionResult()
-        locationSettingsResultLauncher = registerForLocationSettingsResult()
-        setupRecyclerView()
         setupListeners()
+        setupRequestPermissionLauncher()
+        setupLocationSettingsLauncher()
+        setupLocationServices()
+        setupRecyclerView()
+        initializeViewModel()
+
+    }
+
+    private fun setupLocationServices() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireContext())
+        createLocationRequest()
+    }
+
+    private fun setupLocationSettingsLauncher() {
+        locationSettingsLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                    startLocationUpdates()
+                } else {
+                    showLocationSettingsDialog()
+                }
+            }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                p0.locations.forEach { location ->
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    getTheDataFromViewModelOfCurrentArea(latitude, longitude)
+                }
+                // Stop location updates after receiving the first location
+                stopLocationUpdates()
+            }
+        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest, locationCallback, Looper.getMainLooper()
+        )
+    }
+
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun setupRequestPermissionLauncher() {
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    checkLocationSettings()
+                } else {
+                    showPermissionDeniedDialog()
+                }
+            }
+    }
+
+    private fun showPermissionDeniedDialog() {
+        AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
+            .setMessage("Location permission is required to access your current location.")
+            .setPositiveButton("Go to Settings") { _, _ ->
+                openAppSettings()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }.setCancelable(false).show()
     }
 
     private fun initializeViewModel() {
-        weatherViewModel = ViewModelProvider(requireActivity())[WeatherViewModel::class.java]
-        weatherViewModel.weatherObserve.observe(viewLifecycleOwner) { forecasts ->
+        weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+        weatherViewModel.weatherList.observe(viewLifecycleOwner) { forecasts ->
             adapter.list = forecasts
+            adapter.notifyDataSetChanged()
             if (forecasts.isNotEmpty()) {
                 setValuesToFirstIndexWhichMeansTheCurrentDay(forecasts[0])
             }
@@ -105,6 +171,7 @@ class HomeFragment : Fragment(), OnItemForeCastClickListener {
         binding.rvMain.layoutManager = LinearLayoutManager(requireContext())
         adapter = WeatherAdapter(emptyList(), this)
         binding.rvMain.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
     private fun setupListeners() {
@@ -113,7 +180,7 @@ class HomeFragment : Fragment(), OnItemForeCastClickListener {
             closeKeyboardLayoutAfterTheUserPressOnSearchIcon()
         }
         binding.ivGetCurrentLocation.setOnClickListener {
-            getPermission()
+            requestLocationPermission()
         }
     }
 
@@ -149,156 +216,108 @@ class HomeFragment : Fragment(), OnItemForeCastClickListener {
         inputManager?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    private fun registerForPermissionResult(): ActivityResultLauncher<Array<String>> {
-        return registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true && permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-                getPermission()
-            } else {
-                showPermissionDeniedDialog()
-            }
-        }
-    }
-
-    private fun registerForLocationSettingsResult(): ActivityResultLauncher<IntentSenderRequest> {
-        return registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // The user has enabled the location settings. Get the current location.
-                getCurrentLocation()
-            } else {
-                // The user has not enabled the location settings.
-                Toast.makeText(
-                    requireContext(),
-                    "Location settings are inadequate, please enable location manually",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    private fun showPermissionDeniedDialog() {
-        android.app.AlertDialog.Builder(context).setTitle("Rational dialog")
-            .setMessage("You must allow the Location permission.").setPositiveButton(
-                "Allow"
-            ) { _, _ -> openAppSettings() }.setNegativeButton("Cancel", null).create().show()
-    }
 
     private fun openAppSettings() {
-        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", requireContext().packageName, null)
-        })
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", requireContext().packageName, null)
+        intent.data = uri
+        startActivity(intent)
     }
 
-    private fun getPermission() {
-        if (hasLocationPermissions()) {
-            // Permissions are already granted, proceed to get current location
-            checkLocationSettingsAndGetCurrentLocation()
-            getCurrentLocation()
+
+    private fun requestLocationPermission() {
+        val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+        if (isLocationPermissionGranted()) {
+            checkLocationSettings()
         } else {
-            requestLocationPermissions()
-        }
-    }
-
-    private fun hasLocationPermissions(): Boolean {
-        val fineLocationPermissionGranted = ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        val coarseLocationPermissionGranted = ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        return fineLocationPermissionGranted && coarseLocationPermissionGranted
-    }
-
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Location permission not granted, handle the case accordingly
-            return
-        }
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                p0.let { result ->
-                    val location = result.lastLocation
-                    // Handle the obtained location here
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-                    getTheDataFromViewModelOfCurrentArea(latitude, longitude)
-                    // Remember to remove the location updates when no longer needed
-                    fusedLocationClient.removeLocationUpdates(this)
-                }
+            if (shouldExplainLocationPermissionRationale()) {
+                showLocationPermissionRationaleDialog()
+            } else {
+                requestPermissionLauncher.launch(locationPermission)
             }
         }
-        fusedLocationClient.requestLocationUpdates(
-            createLocationRequest(), locationCallback, Looper.getMainLooper()
+    }
+
+    private fun shouldExplainLocationPermissionRationale(): Boolean {
+        return ActivityCompat.shouldShowRequestPermissionRationale(
+            requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION
         )
     }
 
-    private fun requestLocationPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
-        if (ContextCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
-
-        requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+    private fun isLocationPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun checkLocationSettingsAndGetCurrentLocation() {
-        val locationRequest = createLocationRequest()
-        val builder = createLocationSettingsRequestBuilder(locationRequest)
-        val client: SettingsClient = LocationServices.getSettingsClient(requireContext())
+    private fun showLocationPermissionRationaleDialog() {
+        AlertDialog.Builder(requireContext()).setTitle("Location Permission")
+            .setMessage("You must allow location permission to access your current location.")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }.setCancelable(false).show()
+    }
+
+    private fun checkLocationSettings() {
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        val client: SettingsClient = LocationServices.getSettingsClient(requireActivity())
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
         task.addOnCompleteListener {
             try {
                 task.getResult(ApiException::class.java)
-                // All location settings are satisfied. Get the current location.
-                getCurrentLocation()
-            } catch (exception: ApiException) {
-                handleLocationSettingsException(exception)
+                startLocationUpdates()
+            } catch (e: ApiException) {
+                handleLocationSettingsException(e)
             }
         }
-    }
-
-    private fun createLocationRequest(): LocationRequest {
-        return LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 5000
-            fastestInterval = 2000
-        }
-    }
-
-    private fun createLocationSettingsRequestBuilder(locationRequest: LocationRequest): LocationSettingsRequest.Builder {
-        return LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
     }
 
     private fun handleLocationSettingsException(exception: ApiException) {
-        when (exception.statusCode) {
-            LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                val resolvable = exception as? ResolvableApiException
-                resolvable?.startResolutionForResult(requireActivity(), locationSettingsRequestCode)
-            }
-
-            LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-                showToast("Location settings is unavailable, please enable location manually")
-            }
-
-            else -> {
-                // Handle unknown or unexpected status codes
-                showToast("Unknown status code for location settings: ${exception.statusCode}")
-            }
+        if (exception.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+            handleResolutionRequired(exception)
+        } else {
+            Log.e(TAG, "Error checking location settings", exception)
         }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    private fun handleResolutionRequired(exception: ApiException) {
+        try {
+            val resolvable = exception as ResolvableApiException
+            locationSettingsLauncher.launch(
+                IntentSenderRequest.Builder(resolvable.resolution).build()
+            )
+        } catch (sendEx: IntentSender.SendIntentException) {
+            Log.e(TAG, "Error opening settings activity", sendEx)
+        }
     }
+
+    private fun createLocationRequest() {
+        locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 10 * 1000
+            fastestInterval = 5 * 1000
+        }
+    }
+
+    private fun showLocationSettingsDialog() {
+        AlertDialog.Builder(requireContext()).setTitle("Location Settings")
+            .setMessage("Location settings are disabled. Enable them now?")
+            .setPositiveButton("OK") { _, _ ->
+                openLocationSettings()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }.setCancelable(false).show()
+    }
+
+    private fun openLocationSettings() {
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        startActivity(intent)
+    }
+
 
     companion object {
         const val API_KEY = "39a2a75e30e53ba6b6d54f6d8ccd9385"

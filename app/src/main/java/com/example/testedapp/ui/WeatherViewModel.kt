@@ -13,9 +13,9 @@ import retrofit2.Response
 
 class WeatherViewModel(application: Application) : AndroidViewModel(application) {
     private val _weather = MutableLiveData<List<Forecast>>()
-    val weatherObserve: LiveData<List<Forecast>> = _weather
+    val weatherList: LiveData<List<Forecast>> get() = _weather
     private val _cityName = MutableLiveData<String>()
-    val cityName: LiveData<String> = _cityName
+    val cityName: LiveData<String> get() = _cityName
 
     fun getWeatherOfNextSevenDays(cityName: String, countOfDays: Int, apiKey: String) {
         ApiServiceClient.apiService.getForecast(cityName, countOfDays, apiKey)
