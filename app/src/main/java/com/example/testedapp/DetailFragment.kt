@@ -17,7 +17,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 class DetailFragment : Fragment() {
-    lateinit var binding: FragmentDetailBinding
+   private lateinit var binding: FragmentDetailBinding
     private val args: DetailFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

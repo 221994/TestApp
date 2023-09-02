@@ -2,6 +2,7 @@ package com.example.testedapp.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import retrofit2.http.Query
 
 @Parcelize
 data class WeatherModel(
@@ -10,7 +11,7 @@ data class WeatherModel(
 
 @Parcelize
 data class Forecast(
-    val dt: Long,
+    @Query("de")val customName: Long,
     val main: Main,
     val weather: List<Weather>,
     val clouds: Clouds,
