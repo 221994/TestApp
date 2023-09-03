@@ -77,7 +77,6 @@ class HomeFragment : Fragment(), OnItemForeCastClickListener {
         setupLocationServices()
         setupRecyclerView()
         initializeViewModel()
-
     }
 
     private fun setupLocationServices() {
