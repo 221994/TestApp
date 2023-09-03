@@ -1,6 +1,6 @@
-package com.example.weathersnap.ui
+package com.example.weathersnap.network
 
-import com.example.weathersnap.model.WeatherModel
+import com.example.weathersnap.data.WeatherModel
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

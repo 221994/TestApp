@@ -1,4 +1,4 @@
-package com.example.weathersnap.model
+package com.example.weathersnap.data
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

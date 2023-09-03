@@ -1,4 +1,4 @@
-package com.example.weathersnap.ui
+package com.example.weathersnap.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.weathersnap.databinding.CustomRvBinding
-import com.example.weathersnap.model.Forecast
+import com.example.weathersnap.data.Forecast
+import com.example.weathersnap.util.Utilities
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle

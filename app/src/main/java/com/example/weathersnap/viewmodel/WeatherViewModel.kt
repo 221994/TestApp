@@ -1,12 +1,13 @@
-package com.example.weathersnap.ui
+package com.example.weathersnap.viewmodel
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.weathersnap.model.Forecast
-import com.example.weathersnap.model.WeatherModel
+import com.example.weathersnap.data.Forecast
+import com.example.weathersnap.data.WeatherModel
+import com.example.weathersnap.network.ApiServiceClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

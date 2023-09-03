@@ -1,4 +1,4 @@
-package com.example.weathersnap.ui
+package com.example.weathersnap.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

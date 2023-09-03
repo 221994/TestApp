@@ -1,4 +1,4 @@
-package com.example.weathersnap
+package com.example.weathersnap.fragments
 
 
 import android.Manifest
@@ -30,11 +30,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weathersnap.databinding.FragmentHomeBinding
-import com.example.weathersnap.model.Forecast
-import com.example.weathersnap.ui.OnItemForeCastClickListener
-import com.example.weathersnap.ui.Utilities
-import com.example.weathersnap.ui.WeatherAdapter
-import com.example.weathersnap.ui.WeatherViewModel
+import com.example.weathersnap.data.Forecast
+import com.example.weathersnap.adapter.OnItemForeCastClickListener
+import com.example.weathersnap.util.Utilities
+import com.example.weathersnap.adapter.WeatherAdapter
+import com.example.weathersnap.viewmodel.WeatherViewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient

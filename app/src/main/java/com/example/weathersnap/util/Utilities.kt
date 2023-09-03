@@ -1,4 +1,4 @@
-package com.example.weathersnap.ui
+package com.example.weathersnap.util
 
 import java.math.RoundingMode
 

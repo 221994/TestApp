@@ -1,4 +1,4 @@
-package com.example.weathersnap
+package com.example.weathersnap.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.weathersnap.databinding.FragmentDetailBinding
-import com.example.weathersnap.ui.Utilities
+import com.example.weathersnap.util.Utilities
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
