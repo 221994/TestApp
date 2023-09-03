@@ -1,4 +1,4 @@
-package com.example.testedapp.ui
+package com.example.weathersnap.ui
 
 import java.math.RoundingMode
 

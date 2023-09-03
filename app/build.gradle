@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.testedapp'
+    namespace 'com.example.weathersnap'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.testedapp"
+        applicationId "com.example.weathersnap"
         minSdk 30
         targetSdk 33
         versionCode 1

@@ -1,4 +1,4 @@
-package com.example.testedapp
+package com.example.weathersnap
 
 import org.junit.Test
 

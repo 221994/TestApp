@@ -1,6 +1,6 @@
-package com.example.testedapp.ui
+package com.example.weathersnap.ui
 
-import com.example.testedapp.model.WeatherModel
+import com.example.weathersnap.model.WeatherModel
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
